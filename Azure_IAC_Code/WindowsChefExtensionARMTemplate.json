@@ -1,0 +1,62 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineName": {
+            "type": "string"
+        },
+        "virtualMachineRG": {
+            "type": "string"
+        },
+        "chefServerUrl": {
+          "type": "string",
+          "metadata": {
+            "description": "chefServerUrl"
+          }
+         },
+        "validationClientName": {
+          "type": "string",
+          "metadata": {
+              "description": "validationClientName"
+          }
+         },
+         "chefRunlist": {
+          "type": "string",
+          "metadata": {
+              "description": "Chef Runlist"
+          }
+         },
+        "chefValidationKey": {
+          "type": "string",
+          "metadata": {
+            "description": "Chef Validation key file path"
+          }
+        }
+    },
+    "variables": {
+       
+    },
+    "resources": [
+        {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(parameters('virtualMachineName'),'/','chefExtension')]",
+          "apiVersion": "2016-04-30-preview",
+          "location": "[resourceGroup().location]",        
+          "properties": {
+            "publisher": "Chef.Bootstrap.WindowsAzure",
+            "type": "ChefClient",
+            "typeHandlerVersion": "1210.12",
+            "settings": {
+              "bootstrap_options": {
+                "chef_server_url": "[parameters('chefServerUrl')]",
+                "validation_client_name": "[parameters('validationClientName')]"
+              },
+              "runlist": "[parameters('chefRunlist')]"
+            },
+            "protectedSettings": {
+              "validation_key": "[parameters('chefValidationKey')]"
+            }
+          }
+        }
+    ]
+  }
